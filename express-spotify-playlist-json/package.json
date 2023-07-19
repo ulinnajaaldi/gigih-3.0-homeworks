@@ -1,0 +1,17 @@
+{
+  "name": "express-spotify-playlist-json",
+  "version": "1.0.0",
+  "description": "express mvc structure spotify playlist",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "author": "Aldilla Ulinnaja",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
