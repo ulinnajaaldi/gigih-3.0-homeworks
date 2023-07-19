@@ -1,7 +1,13 @@
 const Playlist = require("../models/playlist.model");
 
 const getPlaylist = (req, res) => {
-  const playlist = Playlist.getPlaylist();
+  let playlist = Playlist.getPlaylist();
+  if (req.query.sort === "play") {
+    playlist.sort((a, b) => b.play - a.play);
+  }
+  if (req.query.direction === "asc") {
+    playlist.reverse();
+  }
   if (req.query.title) {
     const title = req.query.title.toLowerCase();
     const song = playlist.filter((song) =>
@@ -12,12 +18,11 @@ const getPlaylist = (req, res) => {
     } else {
       res.status(404).send({ message: "Song not found", data: [] });
     }
+  }
+  if (playlist.length > 0) {
+    res.status(200).send({ message: "Playlist retrieved", data: playlist });
   } else {
-    if (playlist.length > 0) {
-      res.status(200).send({ message: "Playlist retrieved", data: playlist });
-    } else {
-      res.status(404).send({ message: "Playlist is empty", data: [] });
-    }
+    res.status(404).send({ message: "Playlist is empty", data: [] });
   }
 };
 
@@ -36,6 +41,7 @@ const addSong = (req, res) => {
     title: req.body.title,
     artists: req.body.artists,
     url: req.body.url,
+    play: Math.floor(Math.random() * 50),
   };
   if (!song.title || !song.artists || !song.url) {
     res.status(400).send({ message: "Please fill all the fields", data: [] });
@@ -69,11 +75,28 @@ const deleteSong = (req, res) => {
   const song = Playlist.getSongById(parseInt(req.params.id));
   if (song) {
     Playlist.deleteSong(parseInt(req.params.id));
-    res.status(200).send({ message: "Song deleted from playlist", data: [] });
+    const { title } = song;
+    res
+      .status(200)
+      .send({ message: `${title} deleted from playlist`, data: [] });
   } else {
     res
       .status(404)
       .send({ message: "Cannot delete, song not found", data: [] });
+  }
+};
+
+const playSong = (req, res) => {
+  const song = Playlist.getSongById(parseInt(req.params.id));
+  if (song) {
+    Playlist.playSong(parseInt(req.params.id));
+    const { title } = song;
+    res.status(200).send({
+      message: `${title} is now playing`,
+      data: [song],
+    });
+  } else {
+    res.status(404).send({ message: "Song not found", data: [] });
   }
 };
 
@@ -83,4 +106,5 @@ module.exports = {
   addSong,
   updateSong,
   deleteSong,
+  playSong,
 };

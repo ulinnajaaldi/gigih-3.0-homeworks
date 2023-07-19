@@ -41,12 +41,26 @@ const updateSong = (id, updates) => {
   }
 };
 
-function deleteSong(id) {
+const deleteSong = (id) => {
   playlist = playlist.filter((song) => song.id !== id);
   fs.writeFile("./app/utils/playlist.json", JSON.stringify(playlist), (err) => {
     if (err) console.log(err);
   });
-}
+};
+
+const playSong = (id) => {
+  const song = getSongById(id);
+  if (song) {
+    song.play += 1;
+    fs.writeFile(
+      "./app/utils/playlist.json",
+      JSON.stringify(playlist),
+      (err) => {
+        if (err) console.log(err);
+      }
+    );
+  }
+};
 
 module.exports = {
   getPlaylist,
@@ -54,4 +68,5 @@ module.exports = {
   addSong,
   updateSong,
   deleteSong,
+  playSong,
 };
