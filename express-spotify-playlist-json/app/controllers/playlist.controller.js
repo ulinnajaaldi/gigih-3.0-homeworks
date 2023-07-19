@@ -50,6 +50,17 @@ const addSong = (req, res) => {
   if (!Array.isArray(song.artists)) {
     song.artists = [song.artists];
   }
+  if (
+    Playlist.getPlaylist().find(
+      (song) => song.title === song.title && song.artists === song.artists
+    )
+  ) {
+    res.status(400).send({
+      message: "Song already exist in the playlist",
+      data: [],
+    });
+    return;
+  }
   Playlist.addSong(song);
   res.status(201).send({ message: "Song added to playlist", data: [song] });
 };
